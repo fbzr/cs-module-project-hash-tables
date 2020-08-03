@@ -20,11 +20,13 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
-        # Your code here
+    def __init__(self, capacity=MIN_CAPACITY):
+        self.capacity = capacity
+        self.my_table = [None] * capacity
 
 
     def get_num_slots(self):
+        pass
         """
         Return the length of the list you're using to hold the hash
         table data. (Not the number of items stored in the hash table,
@@ -62,7 +64,12 @@ class HashTable:
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381
+        
+        for c in key:
+            hash = (hash * 33) + ord(c)
+        
+        return hash
 
 
     def hash_index(self, key):
@@ -81,6 +88,7 @@ class HashTable:
 
         Implement this.
         """
+        self.my_table[self.hash_index(key)] = value
         # Your code here
 
 
@@ -92,6 +100,7 @@ class HashTable:
 
         Implement this.
         """
+        self.my_table[self.hash_index(key)] = None
         # Your code here
 
 
@@ -103,6 +112,7 @@ class HashTable:
 
         Implement this.
         """
+        return self.my_table[self.hash_index(key)]
         # Your code here
 
 

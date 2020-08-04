@@ -1,3 +1,55 @@
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def __get_node_by_key(self, key):
+        current = self.head
+        while current:
+            if current.key == key:
+                break
+            current = current.next
+        
+        return current
+
+    def get(self, key):
+        node = self.__get_node_by_key(key)
+
+        return None if not node else node.value
+
+    def put(self, key, value):
+        # look for node with same key
+        node = self.__get_node_by_key(key)
+        # check if node with same key already exists
+        if node:
+            node.value = value
+            return
+            
+        # create new node with key and value passed as parameters and add make it the list head
+        node = HashTableEntry(key, value)
+        node.next = self.head
+        self.head = node
+
+    def delete(self, key):
+        if not self.head:
+            return
+        
+        current = self.head
+        previous = None
+
+        while current:
+            if current.key == key:
+                if previous:
+                    # link prev next to current next
+                    previous.next = current.next
+                else:
+                    self.head = None
+                
+                break
+
+            previous = current
+            current = current.next
+
+
 class HashTableEntry:
     """
     Linked List hash table key/value pair
@@ -11,7 +63,6 @@ class HashTableEntry:
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
 
-
 class HashTable:
     """
     A hash table that with `capacity` buckets
@@ -23,6 +74,9 @@ class HashTable:
     def __init__(self, capacity=MIN_CAPACITY):
         self.capacity = capacity
         self.my_table = [None] * capacity
+        for i in range(capacity):
+            self.my_table[i] = LinkedList()
+        
 
 
     def get_num_slots(self):
@@ -40,6 +94,7 @@ class HashTable:
 
 
     def get_load_factor(self):
+        pass
         """
         Return the load factor for this hash table.
 
@@ -88,7 +143,7 @@ class HashTable:
 
         Implement this.
         """
-        self.my_table[self.hash_index(key)] = value
+        self.my_table[self.hash_index(key)].put(key, value)
         # Your code here
 
 
@@ -100,7 +155,7 @@ class HashTable:
 
         Implement this.
         """
-        self.my_table[self.hash_index(key)] = None
+        self.my_table[self.hash_index(key)].delete(key)
         # Your code here
 
 
@@ -112,7 +167,7 @@ class HashTable:
 
         Implement this.
         """
-        return self.my_table[self.hash_index(key)]
+        return self.my_table[self.hash_index(key)].get(key)
         # Your code here
 
 
@@ -150,11 +205,11 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     # Test resizing
-    old_capacity = ht.get_num_slots()
-    ht.resize(ht.capacity * 2)
-    new_capacity = ht.get_num_slots()
+    # old_capacity = ht.get_num_slots()
+    # ht.resize(ht.capacity * 2)
+    # new_capacity = ht.get_num_slots()
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
     for i in range(1, 13):

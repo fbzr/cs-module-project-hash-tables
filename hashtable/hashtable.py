@@ -36,8 +36,11 @@ class LinkedList:
         current = self.head
         previous = None
 
+        return_value = None
+
         while current:
             if current.key == key:
+                return_value = current.value
                 if previous:
                     # link prev next to current next
                     previous.next = current.next
@@ -49,6 +52,7 @@ class LinkedList:
             previous = current
             current = current.next
 
+        return return_value
 
 class HashTableEntry:
     """
@@ -73,7 +77,9 @@ class HashTable:
 
     def __init__(self, capacity=MIN_CAPACITY):
         self.capacity = capacity
+        self.count = 0
         self.my_table = [None] * capacity
+
         for i in range(capacity):
             self.my_table[i] = LinkedList()
         
@@ -90,17 +96,16 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        return len(self.my_table)
 
 
     def get_load_factor(self):
-        pass
         """
         Return the load factor for this hash table.
 
         Implement this.
         """
-        # Your code here
+        return self.count / self.capacity
 
 
     def fnv1(self, key):
@@ -144,7 +149,10 @@ class HashTable:
         Implement this.
         """
         self.my_table[self.hash_index(key)].put(key, value)
-        # Your code here
+        self.count += 1
+        
+        if self.get_load_factor() > 0.7:
+            self.resize(self.get_num_slots() * 2)
 
 
     def delete(self, key):
@@ -155,8 +163,8 @@ class HashTable:
 
         Implement this.
         """
-        self.my_table[self.hash_index(key)].delete(key)
-        # Your code here
+        if self.my_table[self.hash_index(key)].delete(key):
+            self.count =- 1
 
 
     def get(self, key):
@@ -178,8 +186,19 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        old_table = self.my_table
 
+        self.my_table = [None] * new_capacity
+        self.capacity = new_capacity
+
+        for i in range(new_capacity):
+            self.my_table[i] = LinkedList()
+
+        for ll in old_table:
+            current_node = ll.head
+            while current_node:
+                self.put(current_node.key, current_node.value)
+                current_node = current_node.next
 
 
 if __name__ == "__main__":
@@ -205,11 +224,11 @@ if __name__ == "__main__":
         print(ht.get(f"line_{i}"))
 
     # Test resizing
-    # old_capacity = ht.get_num_slots()
-    # ht.resize(ht.capacity * 2)
-    # new_capacity = ht.get_num_slots()
+    old_capacity = ht.get_num_slots()
+    ht.resize(ht.capacity * 2)
+    new_capacity = ht.get_num_slots()
 
-    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
     for i in range(1, 13):

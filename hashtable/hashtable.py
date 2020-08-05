@@ -1,16 +1,7 @@
-class HashTableEntry:
-    """
-    Linked List hash table key/value pair
-    """
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
-        self.next = None
-
+from LinkedList import LinkedList
 
 # Hash table can't have fewer than this many slots
 MIN_CAPACITY = 8
-
 
 class HashTable:
     """
@@ -20,11 +11,16 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
-        # Your code here
+    def __init__(self, capacity=MIN_CAPACITY):
+        self.capacity = capacity
+        self.count = 0
+        self.my_table = [None] * capacity
 
+        for i in range(capacity):
+            self.my_table[i] = LinkedList()
 
     def get_num_slots(self):
+        pass
         """
         Return the length of the list you're using to hold the hash
         table data. (Not the number of items stored in the hash table,
@@ -34,8 +30,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        return len(self.my_table)
 
     def get_load_factor(self):
         """
@@ -43,8 +38,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        return self.count / self.capacity
 
     def fnv1(self, key):
         """
@@ -53,17 +47,18 @@ class HashTable:
         Implement this, and/or DJB2.
         """
 
-        # Your code here
-
-
     def djb2(self, key):
         """
         DJB2 hash, 32-bit
 
         Implement this, and/or FNV-1.
         """
-        # Your code here
-
+        hash = 5381
+        
+        for c in key:
+            hash = (hash * 33) + ord(c)
+        
+        return hash
 
     def hash_index(self, key):
         """
@@ -81,7 +76,11 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        self.my_table[self.hash_index(key)].put(key, value)
+        self.count += 1
+        
+        if self.get_load_factor() > 0.7:
+            self.resize(self.get_num_slots() * 2)
 
 
     def delete(self, key):
@@ -92,7 +91,8 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        if self.my_table[self.hash_index(key)].delete(key):
+            self.count =- 1
 
 
     def get(self, key):
@@ -103,6 +103,7 @@ class HashTable:
 
         Implement this.
         """
+        return self.my_table[self.hash_index(key)].get(key)
         # Your code here
 
 
@@ -113,8 +114,19 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        old_table = self.my_table
 
+        self.my_table = [None] * new_capacity
+        self.capacity = new_capacity
+
+        for i in range(new_capacity):
+            self.my_table[i] = LinkedList()
+
+        for ll in old_table:
+            current_node = ll.head
+            while current_node:
+                self.put(current_node.key, current_node.value)
+                current_node = current_node.next
 
 
 if __name__ == "__main__":

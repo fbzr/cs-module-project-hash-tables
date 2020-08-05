@@ -1,7 +1,18 @@
 def no_dups(s):
-    # Your code here
+    words = {}
+    result = ""
+    
+    for w in s.split():
+        if w not in words:
+            # check if it's not the first word to add space
+            if words:
+                result += " "
+            
+            result += w
+            words[w] = w
 
-
+    return result
+        
 
 if __name__ == "__main__":
     print(no_dups(""))

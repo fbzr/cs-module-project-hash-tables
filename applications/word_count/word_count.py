@@ -1,5 +1,18 @@
 def word_count(s):
-    # Your code here
+    result = {}
+    
+    # words = s.lower().translate(s.maketrans('','', '":;,.-+=/\\|[]{}()*^&')).split()
+    words = s.lower().translate({ord(i):None for i in '":;,.-+=/\\|[]{}()*^&'}).split()
+
+    for word in words:
+        if word:
+            if word in result:
+                result[word] += 1
+            else:
+                result[word] = 1
+                
+
+    return result
 
 
 
